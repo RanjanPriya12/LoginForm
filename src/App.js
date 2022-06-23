@@ -1,74 +1,91 @@
-
-import React, { useState } from "react";
-import validator from 'validator'
+import { useState } from "react";
+import "./App.css";
+import FormInput from "./components/FormInput";
 
 const App = () => {
-const [userName,setUserName]=useState('');
-const [errorMessage, setErrorMessage] = useState('')
+  const [values, setValues] = useState({
+    username: "",
+    email: "",
+    birthday: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-const validate = (value) => {
+  const inputs = [
+    {
+      id: 1,
+      name: "username",
+      type: "text",
+      placeholder: "Username",
+      errorMessage:
+        "Username should be 3-16 characters and shouldn't include any special character!",
+      label: "Username",
+      pattern: "^[A-Za-z0-9]{3,16}$",
+      required: true,
+    },
+    {
+      id: 2,
+      name: "email",
+      type: "email",
+      placeholder: "Email",
+      errorMessage: "It should be a valid email address!",
+      label: "Email",
+      required: true,
+    },
+    {
+      id: 3,
+      name: "birthday",
+      type: "date",
+      placeholder: "Birthday",
+      label: "Birthday",
+    },
+    {
+      id: 4,
+      name: "password",
+      type: "password",
+      placeholder: "Password",
+      errorMessage:
+        "Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character!",
+      label: "Password",
+      pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`,
+      required: true,
+    },
+    {
+      id: 5,
+      name: "confirmPassword",
+      type: "password",
+      placeholder: "Confirm Password",
+      errorMessage: "Passwords don't match!",
+      label: "Confirm Password",
+      pattern: values.password,
+      required: true,
+    },
+  ];
 
-	if (validator.isStrongPassword(value, {
-	minLength: 8})){
-    setErrorMessage('Password length should be of atleast 8 characters');
-  }
-  if (validator.isStrongPassword(value, {
-    minUppercase: 1})){
-      setErrorMessage('Password should have Atleast one Uppercase character');
-    }
-    if (validator.isStrongPassword(value, {
-      minNumbers: 1})){
-        setErrorMessage('Password should have Atleast one Number');
-      }
-      if (validator.isStrongPassword(value, {
-        minLowercase: 1})){
-          setErrorMessage('Password should have Atleast one Lowercase Character');
-        }
-        if (validator.isStrongPassword(value, {
-          minSymbols: 1})){
-            setErrorMessage('Password should have Atleast one special character');
-          }
-if(validator.isStrongPassword(value, {
-	minLength: 8,minUppercase: 1,minNumbers: 1,minLowercase: 1,minSymbols: 1})){
-	setErrorMessage('Password is strong')
-  return true;
-	} else {
-	setErrorMessage('Is Not Strong Password')
-  return false;
-	}
-}
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
 
-return (
-	<div style={{
-	marginLeft: '200px',
-	}}>
-	<pre>
-  <div>
-                    <label>User Name : </label>
-                    <input type="text"
-                        onChange={(e) => setUserName(e.target.value)}
-                        name="name" placeholder='Enter username...' />
-                </div>
-                <div>
-                <label>Enter Password: </label>
-    <input type="text"
-    placeholder="Enter your password..."
-		onChange={(e) => validate(e.target.value)}></input> <br />
-		{errorMessage === '' ? null :
-		<i style={{
-		fontWeight: 'bold',
-		color: 'red',
-		}}>{errorMessage}</i>}
-                </div>
-                <div>
-                  <button 
-                  >Login</button>
-                </div>
-		
-	</pre>
-	</div>
-);
-}
+  const onChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value });
+  };
 
-export default App
+  return (
+    <div className="App">
+      <form onSubmit={handleSubmit}>
+        <h1>Registration Form</h1>
+        {inputs.map((input) => (
+          <FormInput
+            key={input.id}
+            {...input}
+            value={values[input.name]}
+            onChange={onChange}
+          />
+        ))}
+        <button>Submit</button>
+      </form>
+    </div>
+  );
+};
 
+export default App;
